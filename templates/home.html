@@ -301,9 +301,9 @@
       text-align: center;
     }
 
-    .container_img_btn .btn_find:hover {
+    /* .container_img_btn .btn_find:hover {
       background-color: #145552;
-    }
+    } */
 
     .container_img_btn .btn_select:hover {
       background-color: #145552;
@@ -414,7 +414,7 @@
             <img src="https://www.blushover.com/images/no-result.png" alt="Image Description"
               style="max-width: 100%; height: auto;">
           </div>
-      
+
         </div>
       </div>
       <div class="col-4">
@@ -432,8 +432,12 @@
     <div id="div_page">
 
     </div>
-
-    <div id="div_total_page">Total: 0 page</div>
+      <nav aria-label="Page navigation">
+            <div class="d-flex justify-content-center" id="div_page">
+                <!-- Pagination links will be dynamically inserted here -->
+            </div>
+            <div id="div_total_page" class="text-center mt-2"></div>
+        </nav>
 
     <div style="margin-bottom: 50px;"></div>
 
@@ -449,47 +453,80 @@
     let hoverImg = document.getElementsByClassName("hoverImg");
     // console.log("data: " + JSON.stringify(data))
     function add_paging() {
-      console.log(data['num_page']);
-      var url = new URL(window.location.href);
-      var cur_index = parseInt(url.searchParams.get("index"));
-      var imgpath = url.searchParams.get("imgpath");
-      // var labelpath = url.searchParams.get("labelpath");
-      if (cur_index == 'undefined') {
-        cur_index = 0;
-      }
-      var i = cur_index - 4;
-      if (i > 0) {
-        var iDiv = document.createElement('div');
-        iDiv.className = 'page_num';
-        iDiv.innerHTML = "...";
-        document.getElementById("div_page").appendChild(iDiv);
-      }
-      for (i; ((i < data['num_page']) && (i < cur_index + 4)); i++) {
-        if (i < 0) {
-          i = 0;
-        }
-        var iDiv = document.createElement('div');
-        iDiv.className = 'page_num';
-        var iA = document.createElement('a');
-        // iA.href = "?index="+i.toString()+"&imgpath="+imgpath+"&labelpath="+labelpath;
-        iA.href = "?index=" + i.toString() + "&imgpath=" + imgpath;
-        iA.innerHTML = i.toString();
-        if (i == cur_index) {
-          iA.style.color = "green";
-        }
-        iDiv.appendChild(iA);
-        document.getElementById("div_page").appendChild(iDiv);
-      }
-      if (i < data['num_page']) {
-        var iDiv = document.createElement('div');
-        iDiv.className = 'page_num';
-        iDiv.innerHTML = "...";
-        document.getElementById("div_page").appendChild(iDiv);
-      }
-      document.getElementById('imgwarning').style.display = 'none';
+    console.log(data['num_page']);
+    var url = new URL(window.location.href);
+    var cur_index = parseInt(url.searchParams.get("page")) || 1; // Default to page 1
+    var textquery = url.searchParams.get("textquery");
 
-      document.getElementById("div_total_page").innerHTML = "Total: " + data['num_page'].toString() + " page";
+    // Clear previous pagination
+    document.getElementById("div_page").innerHTML = '';
+
+    var paginationDiv = document.createElement('nav');
+    paginationDiv.setAttribute('aria-label', 'Page navigation');
+    var ul = document.createElement('ul');
+    ul.className = 'pagination justify-content-center';
+
+    // Previous Button
+    if (cur_index > 1) {
+        var prevLi = document.createElement('li');
+        prevLi.className = 'page-item';
+        var prevLink = document.createElement('a');
+        prevLink.className = 'page-link';
+        prevLink.href = "?textquery=" + encodeURIComponent(textquery) + "&page=" + (cur_index - 1);
+        prevLink.innerHTML = "Previous";
+        prevLi.appendChild(prevLink);
+        ul.appendChild(prevLi);
     }
+
+    // Page Number Range
+    var startIndex = Math.max(cur_index - 2, 1); // Show 2 pages before
+    var endIndex = Math.min(data['num_page'], cur_index + 2); // Show 2 pages after
+
+    if (startIndex > 1) {
+        var ellipsisLi = document.createElement('li');
+        ellipsisLi.className = 'page-item disabled';
+        ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+        ul.appendChild(ellipsisLi);
+    }
+
+    for (var i = startIndex; i <= endIndex; i++) {
+        var iLi = document.createElement('li');
+        iLi.className = 'page-item';
+        var iA = document.createElement('a');
+        iA.className = 'page-link';
+        iA.href = "?textquery=" + encodeURIComponent(textquery) + "&page=" + i;
+        iA.innerHTML = i;
+        if (i === cur_index) {
+            iLi.classList.add('active'); // Highlight current page using Bootstrap class
+        }
+        iLi.appendChild(iA);
+        ul.appendChild(iLi);
+    }
+
+    if (endIndex < data['num_page']) {
+        var ellipsisLi = document.createElement('li');
+        ellipsisLi.className = 'page-item disabled';
+        ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+        ul.appendChild(ellipsisLi);
+    }
+
+    // Next Button
+    if (cur_index < data['num_page']) {
+        var nextLi = document.createElement('li');
+        nextLi.className = 'page-item';
+        var nextLink = document.createElement('a');
+        nextLink.className = 'page-link';
+        nextLink.href = "?textquery=" + encodeURIComponent(textquery) + "&page=" + (cur_index + 1);
+        nextLink.innerHTML = "Next";
+        nextLi.appendChild(nextLink);
+        ul.appendChild(nextLi);
+    }
+
+    paginationDiv.appendChild(ul);
+    document.getElementById("div_page").appendChild(paginationDiv);
+    document.getElementById('imgwarning').style.display = 'none';
+    document.getElementById("div_total_page").innerHTML = "Total: " + data['num_page'] + " pages";
+}
 
     function add_img(div_id_image) {
       let div_img = document.getElementById("div_img");
@@ -532,55 +569,55 @@
 
     const stack = [];
 
-// Function to add id and img_path to the stack
-function go_img_down(id, img_path) {
-  // Check if the id already exists in the stack
-  const index = stack.findIndex(item => item.id === id);
+    // Function to add id and img_path to the stack
+    function go_img_down(id, img_path) {
+      // Check if the id already exists in the stack
+      const index = stack.findIndex(item => item.id === id);
 
-  if (index !== -1) {
-    // If it exists, remove it from the stack
-    stack.splice(index, 1);
-    const div = document.getElementById(`select_${id}`);
-    if (div) {
-      div.style.border = '4px solid white'; // Change border to white on removal
+      if (index !== -1) {
+        // If it exists, remove it from the stack
+        stack.splice(index, 1);
+        const div = document.getElementById(`select_${id}`);
+        if (div) {
+          div.style.border = '4px solid white'; // Change border to white on removal
+        }
+      } else {
+        // If it doesn't exist, add new item
+        stack.push({ id: id, img_path: img_path });
+        const div = document.getElementById(`select_${id}`);
+        if (div) {
+          div.style.border = '4px solid #ffc107'; // Set border color when added
+        }
+      }
+
+      displayStack(); // Update the displayed stack
     }
-  } else {
-    // If it doesn't exist, add new item
-    stack.push({ id: id, img_path: img_path });
-    const div = document.getElementById(`select_${id}`);
-    if (div) {
-      div.style.border = '4px solid #ffc107'; // Set border color when added
+
+    // Function to display the stack in HTML
+    function displayStack() {
+      const stackList = document.getElementById('stackList');
+      stackList.innerHTML = ''; // Clear current list
+
+      if (stack.length === 0) {
+        stackList.innerHTML = '<li>Stack is empty.</li>';
+        return;
+      }
+
+      stack.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${item.id}, ${item.img_path}`;
+        stackList.appendChild(listItem);
+
+        const div = document.getElementById(`select_${item.id}`);
+        if (div) {
+          div.style.border = '4px solid #ffc107'; // Add border if item is in stack
+        }
+      });
     }
-  }
 
-  displayStack(); // Update the displayed stack
-}
+    // Initial call to display stack
+    displayStack(); // Update the displayed stack
 
-// Function to display the stack in HTML
-function displayStack() {
-  const stackList = document.getElementById('stackList');
-  stackList.innerHTML = ''; // Clear current list
-
-  if (stack.length === 0) {
-    stackList.innerHTML = '<li>Stack is empty.</li>';
-    return;
-  }
-
-  stack.forEach(item => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `${item.id}, ${item.img_path}`;
-    stackList.appendChild(listItem);
-    
-    const div = document.getElementById(`select_${item.id}`);
-    if (div) {
-      div.style.border = '4px solid #ffc107'; // Add border if item is in stack
-    }
-  });
-}
-
-// Initial call to display stack
-displayStack(); // Update the displayed stack
-    
     function downloadCSV() {
       if (stack.length === 0) {
         alert("Stack is empty. Nothing to download.");
@@ -598,7 +635,7 @@ displayStack(); // Update the displayed stack
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", textquery+ ".csv");
+      link.setAttribute("download", textquery + ".csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link); // Clean up
