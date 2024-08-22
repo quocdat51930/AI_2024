@@ -310,7 +310,7 @@
     }
 
     .container_img_btn img:hover {
-      border: 4px solid #4dccc6;
+      border: 4px solid #ffc107;
     }
 
     /* .container_img_btn img:focus{hoverImg
@@ -384,6 +384,32 @@
         left: 35px;
         /* Position differently for the second button */
       }
+
+      #stackList {
+        list-style-type: none;
+        /* Loại bỏ dấu đầu dòng mặc định */
+        padding: 0;
+        /* Xóa padding */
+        margin: 0;
+        /* Xóa margin */
+      }
+
+      #stackList li {
+        display: inline-block;
+        /* Hiển thị thẻ li như khối inline */
+        margin-right: 40%;
+        /* Khoảng cách giữa các thẻ */
+        margin-bottom: 10px;
+        /* Khoảng cách dưới mỗi thẻ */
+      }
+
+      /* Clear float */
+      #stackList::after {
+        content: "";
+        display: table;
+        clear: both;
+        /* Clear floats */
+      }
     }
   </style>
   <div class="container">
@@ -419,10 +445,12 @@
       </div>
       <div class="col-4">
         <div id="stackContainer">
-          <h3>Danh sách chọn lựa</h3>
+          <h3>Các ảnh đã chọn</h3>
           <ul id="stackList" style="list-style-type: none; "></ul>
         </div>
-        <button class="btn btn-sm btn-success" onclick="downloadCSV()">Download CSV</button>
+        <button id="btndown" class="btn btn-sm btn-13 text-white mt-2" onclick="downloadCSV()">Download CSV</button>
+        <button id="btn_clear_stack" class="btn btn-sm btn-13 text-white mt-2" onclick="clearStack()">Clear All
+          Stack</button>
       </div>
     </div>
 
@@ -432,12 +460,12 @@
     <div id="div_page">
 
     </div>
-      <nav aria-label="Page navigation">
-            <div class="d-flex justify-content-center" id="div_page">
-                <!-- Pagination links will be dynamically inserted here -->
-            </div>
-            <div id="div_total_page" class="text-center mt-2"></div>
-        </nav>
+    <nav aria-label="Page navigation" >
+      <div class="d-flex justify-content-center" id="div_page" style="display: none;">
+        <!-- Pagination links will be dynamically inserted here -->
+      </div>
+      <div id="div_total_page" class="text-center mt-2"></div>
+    </nav>
 
     <div style="margin-bottom: 50px;"></div>
 
@@ -452,22 +480,26 @@
     let btn_select = document.getElementsByClassName("btn_select");
     let hoverImg = document.getElementsByClassName("hoverImg");
     // console.log("data: " + JSON.stringify(data))
+    let btndown = document.getElementById('btndown');
+    let btn_clear_stack = document.getElementById('btn_clear_stack');
+
+    let stack = JSON.parse(sessionStorage.getItem('stack')) || []; // Khởi tạo stack từ sessionStorage
     function add_paging() {
-    console.log(data['num_page']);
-    var url = new URL(window.location.href);
-    var cur_index = parseInt(url.searchParams.get("page")) || 1; // Default to page 1
-    var textquery = url.searchParams.get("textquery");
+      console.log(data['num_page']);
+      var url = new URL(window.location.href);
+      var cur_index = parseInt(url.searchParams.get("page")) || 1; // Default to page 1
+      var textquery = url.searchParams.get("textquery");
 
-    // Clear previous pagination
-    document.getElementById("div_page").innerHTML = '';
+      // Clear previous pagination
+      document.getElementById("div_page").innerHTML = '';
 
-    var paginationDiv = document.createElement('nav');
-    paginationDiv.setAttribute('aria-label', 'Page navigation');
-    var ul = document.createElement('ul');
-    ul.className = 'pagination justify-content-center';
+      var paginationDiv = document.createElement('nav');
+      paginationDiv.setAttribute('aria-label', 'Page navigation');
+      var ul = document.createElement('ul');
+      ul.className = 'pagination justify-content-center';
 
-    // Previous Button
-    if (cur_index > 1) {
+      // Previous Button
+      if (cur_index > 1) {
         var prevLi = document.createElement('li');
         prevLi.className = 'page-item';
         var prevLink = document.createElement('a');
@@ -476,20 +508,20 @@
         prevLink.innerHTML = "Previous";
         prevLi.appendChild(prevLink);
         ul.appendChild(prevLi);
-    }
+      }
 
-    // Page Number Range
-    var startIndex = Math.max(cur_index - 2, 1); // Show 2 pages before
-    var endIndex = Math.min(data['num_page'], cur_index + 2); // Show 2 pages after
+      // Page Number Range
+      var startIndex = Math.max(cur_index - 2, 1); // Show 2 pages before
+      var endIndex = Math.min(data['num_page'], cur_index + 2); // Show 2 pages after
 
-    if (startIndex > 1) {
+      if (startIndex > 1) {
         var ellipsisLi = document.createElement('li');
         ellipsisLi.className = 'page-item disabled';
         ellipsisLi.innerHTML = '<span class="page-link">...</span>';
         ul.appendChild(ellipsisLi);
-    }
+      }
 
-    for (var i = startIndex; i <= endIndex; i++) {
+      for (var i = startIndex; i <= endIndex; i++) {
         var iLi = document.createElement('li');
         iLi.className = 'page-item';
         var iA = document.createElement('a');
@@ -497,21 +529,21 @@
         iA.href = "?textquery=" + encodeURIComponent(textquery) + "&page=" + i;
         iA.innerHTML = i;
         if (i === cur_index) {
-            iLi.classList.add('active'); // Highlight current page using Bootstrap class
+          iLi.classList.add('active'); // Highlight current page using Bootstrap class
         }
         iLi.appendChild(iA);
         ul.appendChild(iLi);
-    }
+      }
 
-    if (endIndex < data['num_page']) {
+      if (endIndex < data['num_page']) {
         var ellipsisLi = document.createElement('li');
         ellipsisLi.className = 'page-item disabled';
         ellipsisLi.innerHTML = '<span class="page-link">...</span>';
         ul.appendChild(ellipsisLi);
-    }
+      }
 
-    // Next Button
-    if (cur_index < data['num_page']) {
+      // Next Button
+      if (cur_index < data['num_page']) {
         var nextLi = document.createElement('li');
         nextLi.className = 'page-item';
         var nextLink = document.createElement('a');
@@ -520,13 +552,38 @@
         nextLink.innerHTML = "Next";
         nextLi.appendChild(nextLink);
         ul.appendChild(nextLi);
+      }
+
+      paginationDiv.appendChild(ul);
+      document.getElementById("div_page").appendChild(paginationDiv);
+      document.getElementById('imgwarning').style.display = 'none';
+      document.getElementById("div_total_page").innerHTML = "Total: " + data['num_page'] + " pages";
+      updateStackDisplay(); // Cập nhật hiển thị stack tại đây
+      
     }
 
-    paginationDiv.appendChild(ul);
-    document.getElementById("div_page").appendChild(paginationDiv);
-    document.getElementById('imgwarning').style.display = 'none';
-    document.getElementById("div_total_page").innerHTML = "Total: " + data['num_page'] + " pages";
-}
+    function updateStackDisplay() {
+      const stackList = document.getElementById('stackList');
+      stackList.innerHTML = ''; // Xóa nội dung danh sách
+
+      if (stack.length === 0) {
+        stackList.innerHTML = '<li>Danh sách sỗng.</li>';
+      } else {
+        stack.forEach(item => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${item.id}, ${item.img_path}`;
+          stackList.appendChild(listItem);
+          updateStackDisplays(); // Cập nhật hiển thị stack
+
+        });
+      }
+    }
+
+    function updateStackDisplays() {
+      stack.forEach(item => {
+          updateBorders();
+        });
+    }
 
     function add_img(div_id_image) {
       let div_img = document.getElementById("div_img");
@@ -567,30 +624,38 @@
       window.open("/imgsearch?imgid=" + id);
     }
 
-    const stack = [];
 
-    // Function to add id and img_path to the stack
-    function go_img_down(id, img_path) {
-      // Check if the id already exists in the stack
+    function go_img_down(id, imgPath) {
       const index = stack.findIndex(item => item.id === id);
 
       if (index !== -1) {
-        // If it exists, remove it from the stack
+        // Xóa phần tử khỏi stack nếu đã có
         stack.splice(index, 1);
-        const div = document.getElementById(`select_${id}`);
-        if (div) {
-          div.style.border = '4px solid white'; // Change border to white on removal
-        }
+        document.getElementById(`select_${id}`).style.border = 'none';
       } else {
-        // If it doesn't exist, add new item
-        stack.push({ id: id, img_path: img_path });
-        const div = document.getElementById(`select_${id}`);
-        if (div) {
-          div.style.border = '4px solid #ffc107'; // Set border color when added
-        }
+        // Thêm phần tử vào stack nếu chưa có
+        stack.push({ id, img_path: imgPath });
+        document.getElementById(`select_${id}`).style.border = '4px solid #4dccc6';
       }
 
-      displayStack(); // Update the displayed stack
+      // Lưu stack vào sessionStorage
+      sessionStorage.setItem('stack', JSON.stringify(stack));
+      updateStackDisplay(); // Cập nhật hiển thị stack
+      btndown.style.display = "block";
+      btn_clear_stack.style.display ="block";
+
+
+    }
+
+
+    function updateBorders() {
+      stack.forEach(item => {
+        const div = document.getElementById(`select_${item.id}`);
+        if (div) {
+          div.style.border = '4px solid #4dccc6'; // Thêm border nếu item có trong stack
+        }
+      });
+
     }
 
     // Function to display the stack in HTML
@@ -599,20 +664,16 @@
       stackList.innerHTML = ''; // Clear current list
 
       if (stack.length === 0) {
-        stackList.innerHTML = '<li>Stack is empty.</li>';
+        stackList.innerHTML = '<li>Danh sách rỗng.</li>';
+        btndown.style.display = "none";
+        btn_clear_stack.style.display ="none";
         return;
+      } else {
+        btndown.style.display = "block";
+        btn_clear_stack.style.display ="block";
+
       }
 
-      stack.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${item.id}, ${item.img_path}`;
-        stackList.appendChild(listItem);
-
-        const div = document.getElementById(`select_${item.id}`);
-        if (div) {
-          div.style.border = '4px solid #ffc107'; // Add border if item is in stack
-        }
-      });
     }
 
     // Initial call to display stack
@@ -620,7 +681,7 @@
 
     function downloadCSV() {
       if (stack.length === 0) {
-        alert("Stack is empty. Nothing to download.");
+        alert("Danh sách rỗng. Nothing to download.");
         return; // Exit the function if stack is empty
       }
 
@@ -639,8 +700,10 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link); // Clean up
+      clearStack();
     }
     function on_load() {
+
       var url = new URL(window.location.href);
       var imgpath = url.searchParams.get("imgpath");
       if ("query" in data) {
@@ -648,6 +711,8 @@
       }
       add_paging();
       add_img("div_img");
+
+
     }
 
     function show_list_segment(id) {
@@ -666,6 +731,31 @@
 
     }
 
+    function clearStack() {
+      // Xóa stack
+      stack = [];
+      // Xóa sessionStorage cho stack
+      sessionStorage.removeItem('stack');
+
+      // Khôi phục trạng thái cho tất cả các ảnh
+      Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith('select_')) {
+          const imgElement = document.getElementById(key);
+          if (imgElement) {
+            imgElement.style.border = 'none'; // Đặt lại kiểu cho tất cả ảnh
+          }
+        }
+      });
+
+      // Xóa tất cả các mục trong sessionStorage
+      for (let key in sessionStorage) {
+        if (key.startsWith('select_')) {
+          sessionStorage.removeItem(key);
+        }
+      }
+
+      updateStackDisplay(); // Cập nhật hiển thị stack
+    }
 
   </script>
 </body>
