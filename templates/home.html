@@ -120,7 +120,7 @@
     .container {
       width: 100%;
       height: 100%;
-      background-color: #e0e5ec;
+      background-color: #ffffff;
       ;
     }
 
@@ -265,7 +265,7 @@
       flex-direction: row;
       flex-wrap: wrap;
       padding: 20px;
-      background-color: #e0e5ec;
+      background-color: #ffffff;
       /* height: 120px;
                 width: 516px; */
     }
@@ -397,9 +397,6 @@
       </div>
       <div class="group_btn">
         <button class="custom-btn btn-13" onclick="search();"><span>Search</span></button>
-        <button id="exportBtn" class="custom-btn btnexxport" style="background-color: #c20010; border: none;">Xuất
-          CSV</button>
-
       </div>
 
     </div>
@@ -408,10 +405,24 @@
     <!-- <div style="height: 5px; width: 100%; background-color: black; margin-bottom: 5px; margin-top: 5px;"></div> -->
 
 
-    <div id="div_img">
-      <!-- This div is intentionally left empty -->
 
+    <div class="row">
+      <div class="col-8">
+        <div id="div_img">
+          <!-- This div is intentionally left empty -->
+
+        </div>
+      </div>
+      <div class="col-4">
+        <div id="stackContainer">
+          <h3>Danh sách chọn lựa</h3>
+          <ul id="stackList" style="list-style-type: none; "></ul>
+        </div>
+        <button class="btn btn-sm btn-success" onclick="downloadCSV()">Download CSV</button>
+      </div>
     </div>
+
+
     <div id="imgwarning" style="display: flex; justify-content: center; align-items: center; height: 50vh;">
       <img src="https://www.blushover.com/images/no-result.png" alt="Image Description"
         style="max-width: 100%; height: auto;">
@@ -421,7 +432,9 @@
     <div id="div_page">
 
     </div>
+
     <div id="div_total_page">Total: 0 page</div>
+
     <div style="margin-bottom: 50px;"></div>
 
   </div>
@@ -483,66 +496,19 @@
       let pagefile_list = data['pagefile'];
 
       pagefile_list.forEach((item, index) => {
-        // Hàm để chuyển đổi dữ liệu thành định dạng CSV
-        function convertToCSV(data) {
-          // const headers = 'id,imgpath\n'; // Header của file CSV
-          const rows = data.map(item => {
-            console.log('item: ' + JSON.stringify(item)); // In ra mỗi item
-            return `"${item.id}","${item.imgpath}"`; // Tạo các dòng dữ liệu
-          }).join('\n'); // Tạo chuỗi dữ liệu
-          return rows; // Trả về CSV hoàn chỉnh
-        }
-
-        // Hàm để tải file CSV
-        function downloadCSV(filename, csvContent) {
-          try {
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-
-            link.setAttribute("href", url);
-            link.setAttribute("download", filename);
-            document.body.appendChild(link); // Tạo link để tải về
-            link.click(); // Simulate a click
-            document.body.removeChild(link); // Xóa link khỏi DOM
-          } catch (error) {
-            console.error('Không thể tải file CSV:', error);
-            alert('Xảy ra lỗi khi tải file CSV. Vui lòng thử lại!'); // Thông báo lỗi
-          }
-        }
-
-        // Xử lý sự kiện khi nút được nhấn
-        document.getElementById("exportBtn").addEventListener("click", function () {
-          // Kiểm tra điều kiện URL
-          if (window.location.href === 'http://127.0.0.1:5001/textsearch?textquery=') {
-            alert('Không có dữ liệu để tải.'); // Thông báo
-            return; // Dừng thực hiện
-          }
-          const csvContent = convertToCSV(pagefile_list); // Sử dụng pagefile_list
-          // Lấy URL hiện tại
-          const urlParams = new URLSearchParams(window.location.search);
-
-          // Lấy giá trị của tham số textquery
-          const textquery = urlParams.get('textquery');
-
-          downloadCSV(textquery+'.csv', csvContent);
-        });
-        // $("#div_img").append(
-        //   `<div class= "container_img_btn"  onmouseover="mouseOver(${index})" onmouseout="mouseOut(${index})">
-        //                 <button class="btn_find btn-secondary btn-sm" style="display:none; color: white" onClick="go_img_search(${item.id})"><i class="fa-solid fa-eye"></i></button>
-        //                 <button class="btn_save btn-primary btn-sm ml-3" style="display:none;" onClick="go_img_search(${item.id})"><i class="fa-solid fa-floppy-disk"></i></button>
-        //                 <img class="hoverImg" onclick="show_list_segment(${item.id})" src="get_img?fpath=${item.imgpath}">
-        //             </div>`
-        // )
         $("#div_img").append(
-          `<div class= "container_img_btn"  onmouseover="mouseOver(${index})" onmouseout="mouseOut(${index})">
-                        <button class="btn_find btn-secondary btn-sm" style="display:none; color: white" onClick="go_img_search(${item.id})"><i class="fa-solid fa-eye"></i></button>
-                        <img class="hoverImg" onclick="show_list_segment(${item.id})" src="get_img?fpath=${item.imgpath}">
-                    </div>`
+          `<div class= "container_img_btn col-4""  onmouseover="mouseOver(${index})" onmouseout="mouseOut(${index})">
+                      <button class="btn_find btn-secondary btn-sm" style="display:none; color: white" onClick="go_img_search(${item.id})"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn_save btn-primary btn-sm ml-3" style="display:none;" 
+                                    onClick="go_img_down('${item.id}', '${item.imgpath}')">
+                                <i class="fa-regular fa-circle-check"></i>
+                            </button>                       
+                       <img id="select_${item.id}" class="hoverImg" onclick="show_list_segment(${item.id})" src="get_img?fpath=${item.imgpath}">
+            </div>`
         )
       });
 
-      document.getElementsByClassName('btnexxport').style.display = 'bloc';
+      document.getElementsByClassName('btnexxport').style.display = 'block';
 
     }
 
@@ -564,6 +530,76 @@
       window.open("/imgsearch?imgid=" + id);
     }
 
+    const stack = [];
+
+    // Function to add id and img_path to the stack
+    function go_img_down(id, img_path) {
+      // Check if the id already exists in the stack
+      const index = stack.findIndex(item => item.id === id);
+
+      if (index !== -1) {
+        // If it exists, remove it from the stack
+        stack.splice(index, 1);
+      } else {
+        // If it doesn't exist, add new item
+        stack.push({ id: id, img_path: img_path });
+      }
+
+      displayStack(); // Update the displayed stack
+    }
+
+    // Function to display the stack in HTML
+    function displayStack() {
+      const stackList = document.getElementById('stackList');
+      stackList.innerHTML = ''; // Clear current list
+
+      if (stack.length === 0) {
+        stackList.innerHTML = '<li>Stack is empty.</li>';
+        return;
+      }
+
+      stack.forEach(item => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${item.id}, ${item.img_path}`;
+        stackList.appendChild(listItem);
+        const div = document.getElementById(`select_${item.id}`);
+        if (div) {
+          div.style.border = '4px solid #ffc107'; // Add border if item is in stack
+        }
+      });
+    }
+
+    // Function to remove the last item from the stack (undo)
+    function undo() {
+      if (stack.length > 0) {
+        stack.pop(); // Remove the last item
+        displayStack(); // Refresh the displayed stack
+      } else {
+        alert("No items to undo.");
+      }
+    }
+    function downloadCSV() {
+      if (stack.length === 0) {
+        alert("Stack is empty. Nothing to download.");
+        return; // Exit the function if stack is empty
+      }
+
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + stack.map(item => `"${item.id}","${item.img_path}"`).join("\n");
+      // Lấy URL hiện tại
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Lấy giá trị của tham số textquery
+      const textquery = urlParams.get('textquery');
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", textquery+ ".csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); // Clean up
+    }
     function on_load() {
       var url = new URL(window.location.href);
       var imgpath = url.searchParams.get("imgpath");
