@@ -412,7 +412,7 @@
       <!-- This div is intentionally left empty -->
 
     </div>
-    <div style="display: flex; justify-content: center; align-items: center; height: 50vh;">
+    <div id="imgwarning" style="display: flex; justify-content: center; align-items: center; height: 50vh;">
       <img src="https://www.blushover.com/images/no-result.png" alt="Image Description"
         style="max-width: 100%; height: auto;">
     </div>
@@ -473,6 +473,7 @@
         iDiv.innerHTML = "...";
         document.getElementById("div_page").appendChild(iDiv);
       }
+      document.getElementById('imgwarning').style.display = 'none';
 
       document.getElementById("div_total_page").innerHTML = "Total: " + data['num_page'].toString() + " page";
     }
@@ -540,7 +541,6 @@
                     </div>`
         )
       });
-      document.getElementsByClassName('imgwarning').style.display = 'none';
 
       document.getElementsByClassName('btnexxport').style.display = 'bloc';
 
@@ -584,6 +584,7 @@
       window.location.href = "/textsearch?textquery=" + text_query;
 
       document.getElementById('text_query').innerHTML = text_query;
+
       document.getElementById('div_img').style.display = 'inline'; // Set display to block
 
 
