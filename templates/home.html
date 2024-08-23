@@ -10,408 +10,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
     integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
 </header>
-
 <body onload="on_load();">
-  <style>
-    * {
-      margin: 0;
-    }
-
-    body {
-      margin: 0;
-    }
-
-    .custom-btn {
-      color: #fff;
-      border-radius: 5px;
-      /* padding: 10px 25px; */
-      font-family: 'Lato', sans-serif;
-      background: transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-      display: inline-block;
-      box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, .5),
-        7px 7px 20px 0px rgba(0, 0, 0, .1),
-        4px 4px 5px 0px rgba(0, 0, 0, .1);
-      outline: none;
-    }
-
-    .btn-13 {
-      background-color: #89d8d3;
-      background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
-      border: none;
-      z-index: 1;
-    }
-
-    .btn-13:after {
-      position: absolute;
-      content: "";
-      width: 100%;
-      height: 0;
-      bottom: 0;
-      left: 0;
-      z-index: -1;
-      border-radius: 5px;
-      background-color: #4dccc6;
-      background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
-      box-shadow:
-        -7px -7px 20px 0px #fff9,
-        -4px -4px 5px 0px #fff9,
-        7px 7px 20px 0px #0002,
-        4px 4px 5px 0px #0001;
-      transition: all 0.3s ease;
-    }
-
-    .btn-13:hover {
-      color: #fff;
-    }
-
-    .btn-13:hover:after {
-      top: 0;
-      height: 100%;
-    }
-
-    .btn-13:active {
-      top: 2px;
-    }
-
-    .btn-14 {
-      background-color: #c20010;
-      background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
-      border: none;
-      z-index: 1;
-    }
-
-    .btn-14:after {
-      position: absolute;
-      content: "";
-      width: 100%;
-      height: 0;
-      bottom: 0;
-      left: 0;
-      z-index: -1;
-      border-radius: 5px;
-      background-color: #c20010;
-      background-image: linear-gradient(315deg, #c20010 0%, #c20010 74%);
-      box-shadow:
-        -7px -7px 20px 0px #fff9,
-        -4px -4px 5px 0px #fff9,
-        7px 7px 20px 0px #0002,
-        4px 4px 5px 0px #0001;
-      transition: all 0.3s ease;
-    }
-
-    .btn-14:hover {
-      color: #fff;
-    }
-
-    .btn-14:hover:after {
-      top: 0;
-      height: 100%;
-    }
-
-    .btn-14:active {
-      top: 2px;
-    }
-
-
-    .container {
-      width: 100%;
-      height: 100%;
-      background-color: #ffffff;
-      ;
-    }
-
-    /* search */
-    .search_container {
-      width: 100%;
-      height: 100px;
-      display: grid;
-      grid-template-columns: auto 439px;
-      border-bottom: 5px solid #4dccc6;
-    }
-
-    .search {
-      width: 100%;
-      height: 100%;
-      padding: 20px;
-
-    }
-
-    .search label {
-      position: absolute;
-      font-size: 30px;
-      padding: 10px
-    }
-
-    .search input {
-      width: 96%;
-      height: 50px;
-      border: none;
-      border-radius: 10px;
-      padding-left: 5%;
-      font-size: 20px;
-    }
-
-    .group_btn {
-      width: 100%;
-      height: 100%;
-      padding-top: 20px;
-    }
-
-    .group_btn button {
-      width: 130px;
-      height: 50px;
-      border-radius: 10px;
-      margin-right: 3%;
-      color: white;
-      font-size: 20px;
-    }
-
-    /* search */
-
-    .img_path {
-      height: 100%;
-      background-color: #bdc0c5;
-      padding-left: 20px;
-    }
-
-    .img_path label {
-      font-size: 18px;
-    }
-
-    .img_path input {
-      height: 40px;
-      width: 429px;
-      border-radius: 10px;
-      border: none;
-      margin: 5px 10px 0 10px;
-      padding-left: 2%;
-      font-size: 13px;
-    }
-
-    .img_path button {
-      width: 80px;
-      height: 40px;
-      color: white;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-    .csv {
-      width: 98%;
-      height: 100%;
-      padding-left: 69px;
-      background-color: bdc0c5;
-    }
-
-    .csv label {
-      font-size: 18px;
-    }
-
-    .csv select {
-      width: 80px;
-      height: 40px;
-      border-radius: 10px;
-      border: none;
-      margin: 5px 3px 0 10px;
-      padding-left: 5px;
-      font-size: 13px;
-    }
-
-    .num_querry {
-      background-color: bdc0c5;
-      padding-left: 49px;
-    }
-
-    .num_querry label {
-      font-size: 18px;
-    }
-
-    .num_querry input {
-      width: 45px;
-      height: 40px;
-      border-radius: 10px;
-      border: none;
-      margin: 5px 5px 0 5px;
-      padding-left: 4%;
-      font-size: 13px;
-    }
-
-    .num_querry button {
-      width: 80px;
-      height: 40px;
-      color: white;
-      border-radius: 10px;
-      font-size: 15px;
-    }
-
-
-    /* selection */
-
-    /* list img */
-    .image {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* list img */
-
-    /* add image button */
-    #div_img {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      padding: 20px;
-      background-color: #ffffff;
-      /* height: 120px;
-                width: 516px; */
-    }
-
-    .container_img_btn {
-      position: relative;
-      width: 100%;
-      max-width: 318px;
-      display: grid;
-      grid-template-columns: auto auto auto auto;
-      padding: 1%;
-      cursor: pointer;
-    }
-
-    .container_img_btn img {
-      width: 100%;
-      height: 100%;
-    }
-
-
-
-    .container_img_btn .btn_select {
-      display: none;
-      position: absolute;
-      top: 50%;
-      right: 10%;
-      background-color: #4dccc6;
-      color: white;
-      font-size: 16px;
-      padding: 5px 12px;
-      cursor: pointer;
-      border-radius: 5px;
-      text-align: center;
-    }
-
-    /* .container_img_btn .btn_find:hover {
-      background-color: #145552;
-    } */
-
-    .container_img_btn .btn_select:hover {
-      background-color: #145552;
-    }
-
-    .container_img_btn img:hover {
-      border: 4px solid #ffc107;
-    }
-
-    /* .container_img_btn img:focus{hoverImg
-                border: 1px solid blue;
-            } */
-    /* poup */
-    #popup_canvas {
-      width: 100%;
-      height: 100%;
-    }
-
-    #popup_fname_div {
-      position: fixed;
-      margin-left: 25%;
-      margin-top: 60%;
-      color: rgb(0, 255, 0);
-      font-size: 30;
-    }
-
-    @supports (display: flex) {
-      @media screen and (min-width: 1024px) {
-        article {
-          display: flex;
-        }
-      }
-    }
-
-    @supports (display: grid) {
-      @media screen and (min-width: 1024px) {
-        article {
-          display: grid;
-        }
-      }
-
-      .hoverImg {
-        display: block;
-        /* Ensures that the image is responsive */
-        width: 100%;
-        /* Make the image fill the container */
-        height: auto;
-        /* Maintain aspect ratio */
-      }
-
-      .btn_find,
-      .btn-danger {
-        position: absolute;
-        top: 10px;
-        /* Adjust as needed */
-        left: 10px;
-        /* Adjust as needed */
-        margin: 5px;
-        /* Space between buttons */
-        z-index: 10;
-        /* Ensure buttons are above the image */
-      }
-
-      .btn-primary {
-        position: absolute;
-        top: 10px;
-        /* Adjust as needed */
-        left: 10px;
-        /* Adjust as needed */
-        margin: 5px;
-        /* Space between buttons */
-        z-index: 10;
-        /* Ensure buttons are above the image */
-      }
-
-      /* You can add specific styles for each button if needed */
-      .btn-primary {
-        left: 35px;
-        /* Position differently for the second button */
-      }
-
-      #stackList {
-        list-style-type: none;
-        /* Loại bỏ dấu đầu dòng mặc định */
-        padding: 0;
-        /* Xóa padding */
-        margin: 0;
-        /* Xóa margin */
-      }
-
-      #stackList li {
-        display: inline-block;
-        /* Hiển thị thẻ li như khối inline */
-        margin-right: 40%;
-        /* Khoảng cách giữa các thẻ */
-        margin-bottom: 10px;
-        /* Khoảng cách dưới mỗi thẻ */
-      }
-
-      /* Clear float */
-      #stackList::after {
-        content: "";
-        display: table;
-        clear: both;
-        /* Clear floats */
-      }
-    }
-  </style>
   <div class="container">
     <div class="search_container">
       <div class="search">
@@ -422,7 +24,9 @@
         <input id="text_query" class="pl-5" type="text" placeholder="Text query">
       </div>
       <div class="group_btn">
-        <button class="custom-btn btn-13" onclick="search();"><span>Search</span></button>
+        <button class="btn btn-sm text-white mt-2 bg-success" onclick="search();"><span>Search</span></button>
+        <button class="btn btn-sm text-white mt-2 bg-danger" onclick="downloadAllCSV()"> Download All
+        </button>
       </div>
 
     </div>
@@ -436,7 +40,8 @@
       <div class="col-8">
         <div id="div_img">
           <!-- This div is intentionally left empty -->
-          <div id="imgwarning" style="display: flex; justify-content: center; align-items: center; height: 50vh;">
+          <div id="imgwarning"
+            style="display: flex; justify-content: center; align-items: center; height: 50vh; margin-left: 10%;">
             <img src="https://www.blushover.com/images/no-result.png" alt="Image Description"
               style="max-width: 100%; height: auto;">
           </div>
@@ -445,12 +50,12 @@
       </div>
       <div class="col-4">
         <div id="stackContainer">
-          <h3>Các ảnh đã chọn</h3>
+          <h3>Picture was seleted</h3>
           <ul id="stackList" style="list-style-type: none; "></ul>
         </div>
         <button id="btndown" class="btn btn-sm btn-13 text-white mt-2" onclick="downloadCSV()">Download CSV</button>
-        <button id="btn_clear_stack" class="btn btn-sm btn-13 text-white mt-2" onclick="clearStack()">Clear All
-          Stack</button>
+        <button id="btn_clear_stack" class="btn btn-sm text-white mt-2 bg-danger" onclick="clearStack()">Clear
+          All</button>
       </div>
     </div>
 
@@ -460,8 +65,8 @@
     <div id="div_page">
 
     </div>
-    <nav aria-label="Page navigation" >
-      <div class="d-flex justify-content-center" id="div_page" style="display: none;">
+    <nav aria-label="Page navigation" style="display: none;">
+      <div class="d-flex justify-content-center" id="div_page">
         <!-- Pagination links will be dynamically inserted here -->
       </div>
       <div id="div_total_page" class="text-center mt-2"></div>
@@ -471,6 +76,34 @@
 
   </div>
   <script>
+
+    function downloadAllCSV() {
+      let pagefile_list = data['pagefile'];
+
+      // Tạo một tệp CSV mới
+      let csvContent = "";
+
+      // Thêm từng dòng dữ liệu vào tệp CSV
+      pagefile_list.forEach((item) => {
+        csvContent += `${item.id},${item.imgpath}\n`;
+      });
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Lấy giá trị của tham số textquery
+      const textquery = urlParams.get('textquery');
+      // Tạo một liên kết tạm thời để kích hoạt tải xuống
+      let link = document.createElement('a');
+      link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent));
+      link.setAttribute('download', textquery + '.csv');
+
+      // Thêm liên kết vào tài liệu và kích hoạt tải xuống
+      document.body.appendChild(link);
+      link.click();
+
+      // Xóa liên kết tạm thời
+      document.body.removeChild(link);
+    }
+
     var data = '{{ data|tojson }}';
     data = data.replace(/\s/g, '');
     data = data.replace(/\\/g, '/');
@@ -496,7 +129,7 @@
       var paginationDiv = document.createElement('nav');
       paginationDiv.setAttribute('aria-label', 'Page navigation');
       var ul = document.createElement('ul');
-      ul.className = 'pagination justify-content-center';
+      ul.className = 'pagination justify-content-center d-none';
 
       // Previous Button
       if (cur_index > 1) {
@@ -559,7 +192,7 @@
       document.getElementById('imgwarning').style.display = 'none';
       document.getElementById("div_total_page").innerHTML = "Total: " + data['num_page'] + " pages";
       updateStackDisplay(); // Cập nhật hiển thị stack tại đây
-      
+
     }
 
     function updateStackDisplay() {
@@ -567,7 +200,7 @@
       stackList.innerHTML = ''; // Xóa nội dung danh sách
 
       if (stack.length === 0) {
-        stackList.innerHTML = '<li>Danh sách sỗng.</li>';
+        stackList.innerHTML = '<li>Danh sách rỗng.</li>';
       } else {
         stack.forEach(item => {
           const listItem = document.createElement('li');
@@ -581,8 +214,8 @@
 
     function updateStackDisplays() {
       stack.forEach(item => {
-          updateBorders();
-        });
+        updateBorders();
+      });
     }
 
     function add_img(div_id_image) {
@@ -642,7 +275,7 @@
       sessionStorage.setItem('stack', JSON.stringify(stack));
       updateStackDisplay(); // Cập nhật hiển thị stack
       btndown.style.display = "block";
-      btn_clear_stack.style.display ="block";
+      btn_clear_stack.style.display = "block";
 
 
     }
@@ -666,11 +299,11 @@
       if (stack.length === 0) {
         stackList.innerHTML = '<li>Danh sách rỗng.</li>';
         btndown.style.display = "none";
-        btn_clear_stack.style.display ="none";
+        btn_clear_stack.style.display = "none";
         return;
       } else {
         btndown.style.display = "block";
-        btn_clear_stack.style.display ="block";
+        btn_clear_stack.style.display = "block";
 
       }
 
@@ -702,6 +335,7 @@
       document.body.removeChild(link); // Clean up
       clearStack();
     }
+
     function on_load() {
 
       var url = new URL(window.location.href);
