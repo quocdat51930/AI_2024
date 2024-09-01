@@ -13,11 +13,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
 
 </header>
+
 <body onload="on_load();">
   <div class="container">
     <div class="search_container">
       <div class="search">
-
         <label for="">
           <i class="fa fa-search pr-5" aria-hidden="true"></i>
         </label>
@@ -53,9 +53,10 @@
           <h3>Picture was seleted</h3>
           <ul id="stackList" style="list-style-type: none; "></ul>
         </div>
-        <button id="btndown" class="btn btn-sm btn-13 text-white mt-2" onclick="downloadCSV()">Download CSV</button>
-        <button id="btn_clear_stack" class="btn btn-sm text-white mt-2 bg-danger" onclick="clearStack()">Clear
-          All</button>
+        <div style="display: flex; gap: 10px;">
+          <button id="btndown" class="btn btn-sm text-white mt-2 bg-success"onclick="downloadCSV()">Download CSV</button>
+          <button id="btn_clear_stack" class="btn btn-sm text-white mt-2 bg-danger" onclick="clearStack()">ClearAll</button>
+        </div>
       </div>
     </div>
 
@@ -200,14 +201,13 @@
       stackList.innerHTML = ''; // Xóa nội dung danh sách
 
       if (stack.length === 0) {
-        stackList.innerHTML = '<li>Danh sách rỗng.</li>';
+        stackList.innerHTML = '<li>List is empty.</li>';
       } else {
         stack.forEach(item => {
           const listItem = document.createElement('li');
           listItem.textContent = `${item.id}, ${item.img_path}`;
           stackList.appendChild(listItem);
           updateStackDisplays(); // Cập nhật hiển thị stack
-
         });
       }
     }
@@ -225,12 +225,21 @@
       pagefile_list.forEach((item, index) => {
         $("#div_img").append(
           `<div class= "container_img_btn col-4""  onmouseover="mouseOver(${index})" onmouseout="mouseOut(${index})">
-                      <button class="btn_find btn-secondary btn-sm" style="display:none; color: white" onClick="go_img_search(${item.id})"><i class="fa-solid fa-eye"></i></button>
-                            <button class="btn_save btn-primary btn-sm ml-3" style="display:none;" 
-                                    onClick="go_img_down('${item.id}', '${item.imgpath}')">
-                                <i class="fa-regular fa-circle-check"></i>
-                            </button>                       
-                       <img id="select_${item.id}" class="hoverImg" onclick="show_list_segment(${item.id})" src="get_img?fpath=${item.imgpath}">
+           <div class="position-relative d-inline-block">
+                <img id="select_${item.id}" class="hoverImg" onclick="show_list_segment(${item.id})" src="get_img?fpath=${item.imgpath}">
+
+                <!-- First button (Search) positioned on the image -->
+                <button title="More" class="btn_find btn_image position-absolute" style="top: -0.5px; left: 10px; border: none; display:none; background-color: black; border-radius: 100px; padding: 2px;" onClick="go_img_search('${item.id}')">
+                  <img src="https://cdn1.iconfinder.com/data/icons/image-processing/24/01-picture_frame-1024.png" alt="Search" class="rounded-circle" style="width: 20px; height: 20px; filter: invert(100%);">
+                </button>
+
+                <!-- Second button (Save) positioned on the image -->
+                <button title="Save" class="btn_save btn_image position-absolute" style="top: 4.5px; left: 45px;border: none; display:none; background-color: black; border-radius: 100px; padding: 2px;" onClick="go_img_down('${item.id}', '${item.imgpath}')">
+                  <img src="https://cdn1.iconfinder.com/data/icons/image-processing/24/5-select_picture-512.png" alt="Save" class="rounded-circle" style="width: 20px; height: 20px; filter: invert(100%);">
+                </button>
+              </div>
+
+                                               
             </div>`
         )
       });
@@ -276,7 +285,6 @@
       updateStackDisplay(); // Cập nhật hiển thị stack
       btndown.style.display = "block";
       btn_clear_stack.style.display = "block";
-
 
     }
 
@@ -345,7 +353,12 @@
       }
       add_paging();
       add_img("div_img");
-
+      stack.forEach(item => {
+        const img = document.getElementById(`select_${item.id}`);
+        if (img) {
+          img.style.border = '20px solid red';
+        }
+      });
 
     }
 
@@ -366,6 +379,12 @@
     }
 
     function clearStack() {
+      stack.forEach(item => {
+        const img = document.getElementById(`select_${item.id}`);
+        if (img) {
+          img.style.border = '';
+        }
+      });
       // Xóa stack
       stack = [];
       // Xóa sessionStorage cho stack
@@ -389,8 +408,11 @@
       }
 
       updateStackDisplay(); // Cập nhật hiển thị stack
+
     }
 
+
+    on_load();
   </script>
 </body>
 
